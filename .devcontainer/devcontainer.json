@@ -18,7 +18,8 @@
         "vmware.vscode-spring-boot",
         "vscjava.vscode-spring-boot-dashboard",
         "vscjava.vscode-gradle",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "anthropic.claude-code"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -26,7 +27,9 @@
       }
     }
   },
-  "forwardPorts": [8080],
+  "forwardPorts": [
+    8080
+  ],
   "postCreateCommand": "./gradlew dependencies --quiet",
   "remoteUser": "vscode"
 }

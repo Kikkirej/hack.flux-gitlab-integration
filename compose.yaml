@@ -1,1 +1,5 @@
-services: {}
+services:
+  kafka:
+    image: 'apache/kafka:latest'
+    ports:
+      - '9092'
