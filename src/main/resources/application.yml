@@ -1,6 +1,8 @@
 spring:
   application:
     name: hack.flux-gitlab-integration
+  config:
+    import: "optional:configserver:"
   kafka:
     bootstrap-servers: localhost:9092
     consumer:

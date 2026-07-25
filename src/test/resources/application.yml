@@ -1,0 +1,11 @@
+spring:
+  config:
+    import: "optional:configserver:"
+
+gitlab:
+  access-token: test-access-token
+  parent-group-path: test-group
+
+hackflux:
+  kafka:
+    topic: test-topic
