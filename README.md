@@ -59,6 +59,7 @@ If gitlab_username is not set this directly skips.
 | ---- | ---- | ----| ---- |
 | `spring.kafka.bootstrap-servers` | Endpoint(s) of the Kafka broker(s) to connect to | `localhost:9092` | `localhost:9092` |
 | `spring.kafka.consumer.group-id` | Consumer group id used when reading from Kafka | `hackflux-gitlab-integration` | `hackflux-gitlab-integration` |
+| `hackflux.kafka.topic` | Kafka topic to consume Hack.flux events from | `hackflux-events` | - |
 | `gitlab.url` | Base URL of the GitLab instance to integrate with | `https://gitlab.com` | `https://gitlab.com` |
 | `gitlab.access-token` | Access token used to authenticate against the GitLab API (needs rights to manage groups) | `glpat-xxxxxxxxxxxxxxxxxxxx` | - |
 | `gitlab.parent-group-path` | Path of the parent GitLab group under which hackathon groups are created/assigned as subgroups, i.e. `<parent-group-path>/<technical-id>` | `hackathons` | - |
