@@ -64,9 +64,6 @@ If gitlab_username is not set this directly skips.
 | `gitlab.access-token` | Access token used to authenticate against the GitLab API (needs rights to manage groups) | `glpat-xxxxxxxxxxxxxxxxxxxx` | - |
 | `gitlab.parent-group-path` | Path of the parent GitLab group under which hackathon groups are created/assigned as subgroups, i.e. `<parent-group-path>/<technical-id>` | `hackathons` | - |
 
-
-
-
 ## Dev Start
 
 ````
@@ -103,6 +100,7 @@ NOTE: Out of scope in this version, to reduce complexity.
 
 ### User removed
 
+````
 {
     "hckflx_eventtype": "user_removed",
     "hckflx_topic": 
@@ -121,6 +119,7 @@ NOTE: Out of scope in this version, to reduce complexity.
             }
     }
 }
+````
 
 ## TODO
 
