@@ -65,8 +65,64 @@ If gitlab_username is not set this directly skips.
 | `gitlab.parent-group-path` | Path of the parent GitLab group under which hackathon groups are created/assigned as subgroups, i.e. `<parent-group-path>/<technical-id>` | `hackathons` | - |
 
 
+
+
 ## Dev Start
 
 ````
 ./gradlew bootRun
 ````
+
+## Event Examples
+
+### User added to topic
+
+````
+{
+    "hckflx_eventtype": "user_added",
+    "hckflx_topic": 
+    {
+        "uuid": "d0306161-e912-43e7-883f-6dbbaada8fb8",
+        "friendly_name": "Pizza"
+    },
+    "hckflx_user"{
+        "uuid": "not relevant",
+        "oidcref": "pizza@example.com",
+        "friendly_name": "test",
+        "custom_fields":
+            {
+                "gitlab_user": "klause"
+            }
+    }
+}
+````
+
+### Topic Changed
+
+NOTE: Out of scope in this version, to reduce complexity.
+
+### User removed
+
+{
+    "hckflx_eventtype": "user_removed",
+    "hckflx_topic": 
+    {
+        "uuid": "d0306161-e912-43e7-883f-6dbbaada8fb8",
+        "friendly_name": "Pizza"
+    },
+    "hckflx_user"{
+        "uuid": "not relevant",
+        "oidcref": "pizza@example.com",
+        "friendly_name": "test",
+        "custom_fields":
+            {
+                "gitlab_user": "klaus",
+                "department": "cat sitting"
+            }
+    }
+}
+
+## TODO
+
+* add config to take gitlab user name from mail field. 
+* add name cutting for too long names
