@@ -8,7 +8,7 @@ import org.gitlab4j.api.models.GroupParams
 import org.springframework.stereotype.Service
 
 @Service
-class GitlabGroupService(
+class GitLabGroupService(
 	private val gitLabApi: GitLabApi,
 	private val properties: GitlabProperties,
 ) {
@@ -18,16 +18,18 @@ class GitlabGroupService(
 
 	fun createGroup(technicalId: String, displayName: String): Group {
 		val parentId = gitLabApi.groupApi.getGroup(properties.parentGroupPath).id
+		val name = displayName.take(MAX_NAME_LENGTH)
 		return gitLabApi.groupApi.createGroup(
 			GroupParams()
-				.withName(displayName)
+				.withName(name)
 				.withPath(technicalId)
 				.withParentId(parentId)
 		)
 	}
 
 	fun renameGroup(group: Group, displayName: String) {
-		gitLabApi.groupApi.updateGroup(group.id, GroupParams().withName(displayName))
+		val name = displayName.take(MAX_NAME_LENGTH)
+		gitLabApi.groupApi.updateGroup(group.id, GroupParams().withName(name))
 	}
 
 	fun userExists(gitlabUsername: String): Boolean =
@@ -44,4 +46,8 @@ class GitlabGroupService(
 	}
 
 	private fun groupPath(technicalId: String) = "${properties.parentGroupPath}/$technicalId"
+
+	companion object {
+		private const val MAX_NAME_LENGTH = 127
+	}
 }

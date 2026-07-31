@@ -20,13 +20,13 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class GitlabGroupServiceTest {
+class GitLabGroupServiceTest {
 
 	private val groupApi = mockk<GroupApi>()
 	private val userApi = mockk<UserApi>()
 	private val gitLabApi = mockk<GitLabApi> {
-		every { groupApi } returns this@GitlabGroupServiceTest.groupApi
-		every { userApi } returns this@GitlabGroupServiceTest.userApi
+		every { groupApi } returns this@GitLabGroupServiceTest.groupApi
+		every { userApi } returns this@GitLabGroupServiceTest.userApi
 	}
 	private val properties = GitlabProperties(
 		url = "https://gitlab.example.com",
@@ -34,11 +34,11 @@ class GitlabGroupServiceTest {
 		parentGroupPath = "hackathons",
 	)
 
-	private lateinit var service: GitlabGroupService
+	private lateinit var service: GitLabGroupService
 
 	@BeforeEach
 	fun setUp() {
-		service = GitlabGroupService(gitLabApi, properties)
+		service = GitLabGroupService(gitLabApi, properties)
 	}
 
 	@Test
@@ -77,6 +77,23 @@ class GitlabGroupServiceTest {
 	}
 
 	@Test
+	fun `createGroup truncates a name longer than 127 characters`() {
+		val parent = Group().withId(42L)
+		val created = Group().withId(99L)
+		val longName = "a".repeat(200)
+		every { groupApi.getGroup("hackathons") } returns parent
+		every { groupApi.createGroup(match<GroupParams> { true }) } returns created
+
+		service.createGroup("my-topic", longName)
+
+		verify {
+			groupApi.createGroup(withArg<GroupParams> { params ->
+				assertEquals("a".repeat(127), params.getForm(true).formValues["name"]?.value)
+			})
+		}
+	}
+
+	@Test
 	fun `renameGroup updates only the group name`() {
 		val group = Group().withId(7L)
 		every { groupApi.updateGroup(7L, any<GroupParams>()) } returns group
@@ -86,6 +103,21 @@ class GitlabGroupServiceTest {
 		verify {
 			groupApi.updateGroup(7L, withArg<GroupParams> { params ->
 				assertEquals("New Name", params.getForm(false).formValues["name"]?.value)
+			})
+		}
+	}
+
+	@Test
+	fun `renameGroup truncates a name longer than 127 characters`() {
+		val group = Group().withId(7L)
+		val longName = "b".repeat(200)
+		every { groupApi.updateGroup(7L, any<GroupParams>()) } returns group
+
+		service.renameGroup(group, longName)
+
+		verify {
+			groupApi.updateGroup(7L, withArg<GroupParams> { params ->
+				assertEquals("b".repeat(127), params.getForm(false).formValues["name"]?.value)
 			})
 		}
 	}

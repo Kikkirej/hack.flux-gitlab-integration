@@ -1,13 +1,13 @@
 package net.kikkirej.hack.flux.gitlab.service
 
 import net.kikkirej.hack.flux.gitlab.dto.UserRemovedFromTopicDto
-import net.kikkirej.hack.flux.gitlab.gitlab.GitlabGroupService
+import net.kikkirej.hack.flux.gitlab.gitlab.GitLabGroupService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UserRemovedFromTopicService(
-	private val gitlabGroupService: GitlabGroupService,
+	private val gitlabGroupService: GitLabGroupService,
 ) {
 
 	private val logger = LoggerFactory.getLogger(javaClass)

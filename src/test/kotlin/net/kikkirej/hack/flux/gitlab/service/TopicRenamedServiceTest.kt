@@ -4,13 +4,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.kikkirej.hack.flux.gitlab.dto.TopicRenamedDto
-import net.kikkirej.hack.flux.gitlab.gitlab.GitlabGroupService
+import net.kikkirej.hack.flux.gitlab.gitlab.GitLabGroupService
 import org.gitlab4j.api.models.Group
 import org.junit.jupiter.api.Test
 
 class TopicRenamedServiceTest {
 
-	private val gitlabGroupService = mockk<GitlabGroupService>()
+	private val gitlabGroupService = mockk<GitLabGroupService>()
 	private val service = TopicRenamedService(gitlabGroupService)
 
 	@Test
