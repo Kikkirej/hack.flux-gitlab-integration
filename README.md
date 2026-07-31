@@ -26,12 +26,18 @@ These are described conceptually above; the actual JSON key names are not yet fi
 
 ### User added to hackathon topic (`user-added`)
 
-If the user does not have a gitlab_username defined, this gets directly skipped, as no GitLab interaction is expected.
+The gitlab_username is resolved from the event as follows:
 
-1. The group for the topic is checked, whether it exists
+* By default (`hackflux.gitlab-username-from-oidc-ref: true`), it's derived from the local part of `hckflx_user.oidcref` (the part before `@`), since `oidcref` is a mail address, e.g. `pizza@example.com` resolves to `pizza`.
+* If `hackflux.gitlab-username-from-oidc-ref` is set to `false`, it's read from `custom_fields.gitlab_user` instead.
+
+If the user does not have a gitlab_username defined (or it couldn't be resolved), this gets directly skipped, as no GitLab interaction is expected.
+
+1. It's checked whether the resolved gitlab_username actually corresponds to an existing GitLab user. If it doesn't, this gets skipped with a warning log.
+2. The group for the topic is checked, whether it exists
     * technical name for the URL is using the technical ID as a subgroup of the configured `gitlab.parent-group-path` (i.e. `<parent-group-path>/<technical-id>`). While this is less readable, this makes it easier to identify. 
-2. If it doesn't exist it gets created
-3. gitlab_username from the event is added as an Owner to the topic specific group.
+3. If it doesn't exist it gets created
+4. gitlab_username from the event is added as an Owner to the topic specific group.
     * Doesn't need to check if the user is already in it, as it won't hurt to have the add function be called again.
 
 > **Note (open question):** When the user gets edited with the GitLab username, it would be perfect if another event were triggered by hackflux for this. Until then, this could be handled by a database script run on a cron, so that all events get re-created periodically.
@@ -46,10 +52,11 @@ If the user does not have a gitlab_username defined, this gets directly skipped,
 
 **This doesn't delete the group, as it might delete contained source code**
 
-If gitlab_username is not set this directly skips.
+The gitlab_username is resolved the same way as for `user-added` (see above). If it is not set/couldn't be resolved, this directly skips.
 
-1. Identify the group from the event. If it doesn't exist, skip this event.
-2. Remove gitlab_username's assignment from the group.
+1. It's checked whether the resolved gitlab_username actually corresponds to an existing GitLab user. If it doesn't, this gets skipped with a warning log.
+2. Identify the group from the event. If it doesn't exist, skip this event.
+3. Remove gitlab_username's assignment from the group.
     * Doesn't need to check if the user is currently assigned first, as it won't hurt to call remove again.
 
 
@@ -60,6 +67,7 @@ If gitlab_username is not set this directly skips.
 | `spring.kafka.bootstrap-servers` | Endpoint(s) of the Kafka broker(s) to connect to | `localhost:9092` | `localhost:9092` |
 | `spring.kafka.consumer.group-id` | Consumer group id used when reading from Kafka | `hackflux-gitlab-integration` | `hackflux-gitlab-integration` |
 | `hackflux.kafka.topic` | Kafka topic to consume Hack.flux events from | `hackflux-events` | - |
+| `hackflux.gitlab-username-from-oidc-ref` | When `true`, the GitLab username is derived from the local part (before `@`) of `hckflx_user.oidcref` instead of `custom_fields.gitlab_user`. Useful for Hack.flux setups without a dedicated `gitlab_user` custom field. Set to `false` to use `custom_fields.gitlab_user` instead. | `false` | `true` |
 | `gitlab.url` | Base URL of the GitLab instance to integrate with | `https://gitlab.com` | `https://gitlab.com` |
 | `gitlab.access-token` | Access token used to authenticate against the GitLab API (needs rights to manage groups) | `glpat-xxxxxxxxxxxxxxxxxxxx` | - |
 | `gitlab.parent-group-path` | Path of the parent GitLab group under which hackathon groups are created/assigned as subgroups, i.e. `<parent-group-path>/<technical-id>` | `hackathons` | - |
@@ -84,6 +92,8 @@ To test against a real GitLab instance locally:
 
 ### User added to topic
 
+This example has a `gitlab_user` custom field set; it's only used when `hackflux.gitlab-username-from-oidc-ref` is set to `false`. By default, the GitLab username is derived from `oidcref` instead (`pizza@example.com` -> `pizza`), ignoring `gitlab_user`.
+
 ````
 {
     "hckflx_eventtype": "user_added",
@@ -99,6 +109,30 @@ To test against a real GitLab instance locally:
         "custom_fields":
             {
                 "gitlab_user": "klause"
+            }
+    }
+}
+````
+
+### User added to topic (no `gitlab_user` custom field)
+
+Many Hack.flux setups don't expose a `gitlab_user` custom field at all. With the default `hackflux.gitlab-username-from-oidc-ref: true`, the GitLab username is still resolved, from the local part of `oidcref` (here, `pizza@example.com` -> `pizza`):
+
+````
+{
+    "hckflx_eventtype": "user_added",
+    "hckflx_topic": 
+    {
+        "uuid": "d0306161-e912-43e7-883f-6dbbaada8fb8",
+        "friendly_name": "Pizza"
+    },
+    "hckflx_user"{
+        "uuid": "not relevant",
+        "oidcref": "pizza@example.com",
+        "friendly_name": "test",
+        "custom_fields":
+            {
+                "department": "cat sitting"
             }
     }
 }
@@ -133,5 +167,4 @@ NOTE: Out of scope in this version, to reduce complexity.
 
 ## TODO
 
-* add config to take gitlab user name from mail field. 
 * add name cutting for too long names

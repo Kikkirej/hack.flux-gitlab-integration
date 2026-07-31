@@ -30,6 +30,9 @@ class GitlabGroupService(
 		gitLabApi.groupApi.updateGroup(group.id, GroupParams().withName(displayName))
 	}
 
+	fun userExists(gitlabUsername: String): Boolean =
+		gitLabApi.userApi.getOptionalUser(gitlabUsername).isPresent
+
 	fun addOwner(group: Group, gitlabUsername: String) {
 		val userId = gitLabApi.userApi.getUser(gitlabUsername).id
 		gitLabApi.groupApi.addMember(group.id, userId, AccessLevel.OWNER)

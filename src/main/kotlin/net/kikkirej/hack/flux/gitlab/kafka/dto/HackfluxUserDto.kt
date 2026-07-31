@@ -6,4 +6,5 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HackfluxUserDto(
 	@JsonProperty("custom_fields") val customFields: Map<String, String>? = null,
+	@JsonProperty("oidcref") val oidcRef: String? = null,
 )

@@ -15,8 +15,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Optional
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class GitlabGroupServiceTest {
 
@@ -86,6 +88,21 @@ class GitlabGroupServiceTest {
 				assertEquals("New Name", params.getForm(false).formValues["name"]?.value)
 			})
 		}
+	}
+
+	@Test
+	fun `userExists returns true when the gitlab user exists`() {
+		val user = User().withId(13L)
+		every { userApi.getOptionalUser("alice") } returns Optional.of(user)
+
+		assertTrue(service.userExists("alice"))
+	}
+
+	@Test
+	fun `userExists returns false when the gitlab user does not exist`() {
+		every { userApi.getOptionalUser("ghost") } returns Optional.empty()
+
+		assertFalse(service.userExists("ghost"))
 	}
 
 	@Test

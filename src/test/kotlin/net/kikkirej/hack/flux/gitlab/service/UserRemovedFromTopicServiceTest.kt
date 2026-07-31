@@ -22,7 +22,18 @@ class UserRemovedFromTopicServiceTest {
 	}
 
 	@Test
+	fun `skips entirely when gitlab user does not exist`() {
+		every { gitlabGroupService.userExists("alice") } returns false
+
+		service.handle(UserRemovedFromTopicDto("my-topic", "alice"))
+
+		verify(exactly = 0) { gitlabGroupService.findGroup(any()) }
+		verify(exactly = 0) { gitlabGroupService.removeMember(any(), any()) }
+	}
+
+	@Test
 	fun `skips when the group does not exist`() {
+		every { gitlabGroupService.userExists("alice") } returns true
 		every { gitlabGroupService.findGroup("my-topic") } returns null
 
 		service.handle(UserRemovedFromTopicDto("my-topic", "alice"))
@@ -33,6 +44,7 @@ class UserRemovedFromTopicServiceTest {
 	@Test
 	fun `removes the member from the existing group`() {
 		val group = Group().withId(1L)
+		every { gitlabGroupService.userExists("alice") } returns true
 		every { gitlabGroupService.findGroup("my-topic") } returns group
 		every { gitlabGroupService.removeMember(group, "alice") } returns Unit
 

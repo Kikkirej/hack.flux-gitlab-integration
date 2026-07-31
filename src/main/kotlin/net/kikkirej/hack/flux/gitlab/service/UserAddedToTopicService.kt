@@ -19,6 +19,11 @@ class UserAddedToTopicService(
 			return
 		}
 
+		if (!gitlabGroupService.userExists(gitlabUsername)) {
+			logger.warn("skipping user-added for {}: gitlab user {} does not exist", dto.technicalId, gitlabUsername)
+			return
+		}
+
 		val group = gitlabGroupService.findGroup(dto.technicalId)
 			?: gitlabGroupService.createGroup(dto.technicalId, dto.topicDisplayName)
 				.also { logger.info("created group for topic {}", dto.technicalId) }

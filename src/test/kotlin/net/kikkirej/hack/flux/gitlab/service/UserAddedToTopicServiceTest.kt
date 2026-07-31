@@ -23,8 +23,20 @@ class UserAddedToTopicServiceTest {
 	}
 
 	@Test
+	fun `skips entirely when gitlab user does not exist`() {
+		every { gitlabGroupService.userExists("alice") } returns false
+
+		service.handle(UserAddedToTopicDto("my-topic", "My Topic", "alice"))
+
+		verify(exactly = 0) { gitlabGroupService.findGroup(any()) }
+		verify(exactly = 0) { gitlabGroupService.createGroup(any(), any()) }
+		verify(exactly = 0) { gitlabGroupService.addOwner(any(), any()) }
+	}
+
+	@Test
 	fun `adds owner to the existing group without creating it`() {
 		val group = Group().withId(1L)
+		every { gitlabGroupService.userExists("alice") } returns true
 		every { gitlabGroupService.findGroup("my-topic") } returns group
 		every { gitlabGroupService.addOwner(group, "alice") } returns Unit
 
@@ -37,6 +49,7 @@ class UserAddedToTopicServiceTest {
 	@Test
 	fun `creates the group when missing and then adds owner`() {
 		val group = Group().withId(1L)
+		every { gitlabGroupService.userExists("alice") } returns true
 		every { gitlabGroupService.findGroup("my-topic") } returns null
 		every { gitlabGroupService.createGroup("my-topic", "My Topic") } returns group
 		every { gitlabGroupService.addOwner(group, "alice") } returns Unit

@@ -19,6 +19,11 @@ class UserRemovedFromTopicService(
 			return
 		}
 
+		if (!gitlabGroupService.userExists(gitlabUsername)) {
+			logger.warn("skipping user-removed for {}: gitlab user {} does not exist", dto.technicalId, gitlabUsername)
+			return
+		}
+
 		val group = gitlabGroupService.findGroup(dto.technicalId)
 		if (group == null) {
 			logger.info("skipping user-removed for {}: group does not exist", dto.technicalId)
