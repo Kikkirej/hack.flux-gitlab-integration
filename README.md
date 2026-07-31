@@ -70,6 +70,16 @@ If gitlab_username is not set this directly skips.
 ./gradlew bootRun
 ````
 
+## Local Testing
+
+`docker compose up` starts only Kafka, which is enough to run `./gradlew bootRun` day-to-day.
+
+To test against a real GitLab instance locally:
+
+1. `docker compose --profile gitlab up` also starts a local GitLab CE at `http://localhost:8080`. First boot takes several minutes — watch `docker compose logs -f gitlab` until it's ready.
+2. Once GitLab is up, follow [docs/gitlab-init.md](docs/gitlab-init.md) to get the root password, mint an access token, and create the parent group + test users. Then set the resulting `gitlab.url`, `gitlab.access-token`, and `gitlab.parent-group-path` for `bootRun`.
+3. With the app running and consuming from Kafka, follow [docs/kafka-test-events.md](docs/kafka-test-events.md) to publish `user_added` / `user_removed` events and watch the app react (group/user changes are visible in the local GitLab UI).
+
 ## Event Examples
 
 ### User added to topic
