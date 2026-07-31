@@ -50,7 +50,7 @@ curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
 
 ## 5. Create test users
 
-Usernames match the `gitlab_user` values used in the [README's event examples](../README.md#event-examples) (`klause`, `klaus`).
+Usernames match the `gitlab_user` values used in the [README's event examples](../README.md#event-examples) (`user1`, `user2`).
 
 ```
 curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \

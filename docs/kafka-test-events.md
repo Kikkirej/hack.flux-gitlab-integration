@@ -11,7 +11,7 @@ Corresponds to [User added to hackathon topic](../README.md#user-added-to-hackat
 ```
 echo '{"hckflx_eventtype":"user_added","hckflx_topic":{"uuid":"d0306161-e912-43e7-883f-6dbbaada8fb8","friendly_name":"Pizza"},"hckflx_user":{"uuid":"not relevant","oidcref":"pizza@example.com","friendly_name":"test","custom_fields":{"gitlab_user":"user1"}}}' \
   | docker compose exec -T kafka /opt/kafka/bin/kafka-console-producer.sh \
-    --broker-list localhost:9092 --topic hackflux-events
+    --bootstrap-server localhost:9092 --topic hackflux-events
 ```
 
 ## User removed from topic
@@ -21,7 +21,7 @@ Corresponds to [User removed from the Hackathon Topic](../README.md#user-removed
 ```
 echo '{"hckflx_eventtype":"user_removed","hckflx_topic":{"uuid":"d0306161-e912-43e7-883f-6dbbaada8fb8","friendly_name":"Pizza"},"hckflx_user":{"uuid":"not relevant","oidcref":"pizza@example.com","friendly_name":"test","custom_fields":{"gitlab_user":"user2","department":"cat sitting"}}}' \
   | docker compose exec -T kafka /opt/kafka/bin/kafka-console-producer.sh \
-    --broker-list localhost:9092 --topic hackflux-events
+    --bootstrap-server localhost:9092 --topic hackflux-events
 ```
 
 `topic-renamed` is called out in the README as out of scope for this version, so no example is included for it.

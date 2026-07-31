@@ -5,7 +5,3 @@ spring:
 gitlab:
   access-token: test-access-token
   parent-group-path: test-group
-
-hackflux:
-  kafka:
-    topic: test-topic
