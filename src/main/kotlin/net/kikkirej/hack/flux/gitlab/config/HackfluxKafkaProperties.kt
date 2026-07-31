@@ -4,5 +4,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "hackflux.kafka")
 data class HackfluxKafkaProperties(
-	val topic: String,
+	val topic: String? = null,
 )
